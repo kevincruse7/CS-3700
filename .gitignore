@@ -1,3 +1,10 @@
+# Maven build files
+target/
+
+# IntelliJ project files
+.idea/
+*.iml
+
 # Compiled class file
 *.class
 
