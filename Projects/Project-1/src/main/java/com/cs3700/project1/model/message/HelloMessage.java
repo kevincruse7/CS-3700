@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** Simple data object for a 'hello' message. */
 @Data
 @NoArgsConstructor
 public class HelloMessage {

@@ -5,6 +5,7 @@ import lombok.Value;
 
 import java.util.List;
 
+/** Simple data object for the program state, tracking the guesses made and the flag retrieved. */
 @Value
 public class GuessProgress {
     String flag;

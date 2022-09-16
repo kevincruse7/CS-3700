@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.util.List;
 
+/** Simple data object for either a 'retry' or a 'bye' message. */
 @Data
 public class RetryOrByeMessage {
     String type;

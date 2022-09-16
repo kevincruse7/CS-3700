@@ -1,0 +1,8 @@
+#!/bin/sh
+
+CLASSPATH='src/main/resources:target/out'
+for DEPENDENCY in target/dependency/*; do
+    CLASSPATH=$DEPENDENCY:$CLASSPATH
+done
+
+java -cp "$CLASSPATH" com.cs3700.project1.Main $@

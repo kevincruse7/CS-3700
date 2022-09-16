@@ -9,11 +9,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
+/** Implementation of an encrypted socket handler. */
 public class EncryptedSocketHandler extends AbstractSocketHandler {
     public EncryptedSocketHandler(@NonNull String hostname, int port) {
         super(hostname, port);
     }
 
+    // Open an encrypted socket connection.
     @Override
     protected void open() throws IOException {
         SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();

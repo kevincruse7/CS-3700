@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/** Basic implementation of a word guesser, using a simple candidate elimination strategy. */
 public class BasicWordGuesser implements WordGuesser {
     private final Random random;
     private final List<String> wordList;
@@ -18,6 +19,7 @@ public class BasicWordGuesser implements WordGuesser {
         this.random = new Random();
         this.wordList = new ArrayList<>();
 
+        // Read in word list to memory
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
                 Objects.requireNonNull(getClass().getResourceAsStream("/project1-words.txt"))
         ))) {
@@ -30,11 +32,13 @@ public class BasicWordGuesser implements WordGuesser {
         }
     }
 
+    /** Generate a new guess given the results of previous guesses. */
     @Override
     public String findGuess(@NonNull List<Guess> previousGuesses) {
         char[] exactMatches = new char[Config.WORD_LENGTH];
         Set<Character> inexactMatches = new HashSet<>();
 
+        // Track all found exact and inexact character matches
         for (Guess guess : previousGuesses) {
             for (int index = 0; index < Config.WORD_LENGTH; index++) {
                 switch (guess.getMarks().get(index)) {
@@ -50,6 +54,7 @@ public class BasicWordGuesser implements WordGuesser {
             }
         }
 
+        // Filter out words that don't possess all found exact and inexact matches
         List<String> reducedWordList = wordList.stream().filter(word -> {
             for (int index = 0; index < Config.WORD_LENGTH; index++) {
                 if (exactMatches[index] > 0 && word.charAt(index) != exactMatches[index]) {
@@ -66,6 +71,7 @@ public class BasicWordGuesser implements WordGuesser {
             return true;
         }).collect(Collectors.toList());
 
+        // Return random word from remaining list
         return reducedWordList.get(random.nextInt(reducedWordList.size()));
     }
 }

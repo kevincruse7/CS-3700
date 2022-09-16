@@ -3,6 +3,7 @@ package com.cs3700.project1.model.message;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** Simple data object for a 'guess' message. */
 @Data
 @NoArgsConstructor
 public class GuessMessage {

@@ -8,11 +8,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/** Implementation of an unencrypted socket handler. */
 public class UnencryptedSocketHandler extends AbstractSocketHandler {
     public UnencryptedSocketHandler(@NonNull String hostname, int port) {
         super(hostname, port);
     }
 
+    // Open an unencrypted socket connection
     @Override
     protected void open() throws IOException {
         this.socket = new Socket(hostname, port);

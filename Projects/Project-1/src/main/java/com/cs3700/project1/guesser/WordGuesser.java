@@ -5,6 +5,8 @@ import lombok.NonNull;
 
 import java.util.List;
 
+/** Wordle word guess generator. */
 public interface WordGuesser {
+    /** Generate a new guess given the results of previous guesses. */
     String findGuess(@NonNull List<Guess> previousGuesses);
 }
