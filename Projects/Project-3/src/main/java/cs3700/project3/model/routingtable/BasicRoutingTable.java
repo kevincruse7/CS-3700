@@ -50,7 +50,7 @@ class BasicRoutingTable implements RoutingTable {
         }
 
         // Otherwise, add new route entry to the routing table
-        if (i < routeEntries.size()) {
+        if (i == routeEntries.size()) {
             routeEntries.add(newRouteEntry);
         }
     }

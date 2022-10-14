@@ -53,8 +53,6 @@ class BasicRouter implements Router {
 
             ioBuffer.flip();
             peerChannelMap.get(peer).write(ioBuffer);
-
-            System.out.println("Sent message: " + message);
         }
     }
 
@@ -68,8 +66,6 @@ class BasicRouter implements Router {
         if (bytesRead == 0) {
             return;
         } else if (bytesRead == -1) {
-            System.out.println("Channel indicated closure: " + channel);
-
             channel.close();
             channelKey.cancel();
 
@@ -81,9 +77,8 @@ class BasicRouter implements Router {
         ioBuffer.flip();
         ioBuffer.get(messageBytes);
 
-        final String message = new String(messageBytes);
-        System.out.println("Received message: " + message);
-
-        sendMessages(MessageProcessorFactory.createProcessorFor(message, routingTable, peerRelationshipMap).get());
+        sendMessages(MessageProcessorFactory.createProcessorFor(
+            new String(messageBytes), routingTable, peerRelationshipMap
+        ).get());
     }
 }

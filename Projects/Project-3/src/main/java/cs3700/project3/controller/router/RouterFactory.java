@@ -33,6 +33,7 @@ public class RouterFactory {
             final String relationship = peerComponents[2];
 
             final DatagramChannel channel = DatagramChannel.open();
+            channel.configureBlocking(false);
             channel.bind(new InetSocketAddress(Config.DOMAIN, 0));
             channel.connect(new InetSocketAddress(Config.DOMAIN, port));
             channel.register(channelSelector, SelectionKey.OP_READ);

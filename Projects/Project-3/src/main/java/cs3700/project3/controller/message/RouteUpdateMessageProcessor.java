@@ -34,14 +34,14 @@ class RouteUpdateMessageProcessor implements MessageProcessor {
         final String src = routeUpdateMessage.getSrc();
         final RouteUpdate routeUpdate = routeUpdateMessage.getRouteUpdate();
 
+        routingTable.update(src, routeUpdate);
+
         // Add our AS number to the path, if it's not already there
         if (!routeUpdate.getAsPath().contains(routingTable.getAs())) {
             final List<Integer> newAsPath = new ArrayList<>(routeUpdate.getAsPath());
             newAsPath.add(0, routingTable.getAs());
             routeUpdate.setAsPath(newAsPath);
         }
-
-        routingTable.update(src, routeUpdate);
 
         return peerRelationshipMap.keySet()
             .stream()
@@ -53,12 +53,16 @@ class RouteUpdateMessageProcessor implements MessageProcessor {
 
     @SneakyThrows
     private String createRouteUpdateMessage(@NonNull String peer) {
-        final RouteUpdateMessage routeUpdateMessage = new RouteUpdateMessage();
+        final RouteUpdateMessage newRouteUpdateMessage = new RouteUpdateMessage();
+        newRouteUpdateMessage.setSrc(MessageProcessorUtil.getSrcAddressFrom(peer));
+        newRouteUpdateMessage.setDst(peer);
 
-        routeUpdateMessage.setSrc(MessageProcessorUtil.getSrcAddressFrom(peer));
-        routeUpdateMessage.setDst(peer);
-        routeUpdateMessage.setRouteUpdate(routeUpdateMessage.getRouteUpdate());
+        final RouteUpdate routeUpdate = routeUpdateMessage.getRouteUpdate();
+        routeUpdate.setLocalPref(null);
+        routeUpdate.setSelfOrigin(null);
+        routeUpdate.setOrigin(null);
+        newRouteUpdateMessage.setRouteUpdate(routeUpdate);
 
-        return objectMapper.writeValueAsString(routeUpdateMessage);
+        return objectMapper.writeValueAsString(newRouteUpdateMessage);
     }
 }

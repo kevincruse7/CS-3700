@@ -1,5 +1,6 @@
 package cs3700.project3.controller.message;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cs3700.project3.model.message.DataMessage;
 import cs3700.project3.model.message.DumpMessage;
@@ -13,7 +14,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class MessageProcessorFactory {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+        .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
     public static MessageProcessor createHandshakeProcessorFor(@NonNull Set<String> peers) {
         return new HandshakeMessageProcessor(OBJECT_MAPPER, peers);
