@@ -8,8 +8,12 @@ import java.util.List;
 
 public interface RoutingTable {
     void update(String peer, RouteUpdate routeUpdate);
+
     void withdraw(String peer, RouteWithdrawal routeWithdrawal);
+
     String nextHop(String dst);
+
     List<RouteEntry> dumpContents();
+
     int getAs();
 }

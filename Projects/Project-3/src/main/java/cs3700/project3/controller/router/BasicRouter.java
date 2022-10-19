@@ -1,5 +1,6 @@
 package cs3700.project3.controller.router;
 
+import cs3700.project3.Config;
 import cs3700.project3.controller.message.MessageProcessorFactory;
 import cs3700.project3.model.routingtable.RoutingTable;
 import lombok.AccessLevel;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 
+import java.net.PortUnreachableException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
@@ -36,11 +38,20 @@ class BasicRouter implements Router {
         // Send handshake messages to peers
         sendMessages(MessageProcessorFactory.createHandshakeProcessorFor(peerRelationshipMap.keySet()).get());
 
-        while (channelSelector.keys().size() > 0) {
-            channelSelector.select(this::receiveFromChannelAndRespond);
+        int selectedChannels = 1;
+
+        while (selectedChannels > 0) {
+            selectedChannels = channelSelector.select(
+                this::receiveFromChannelAndRespond,
+                Config.NETWORK_CONNECTION_TIMEOUT_MILLIS
+            );
         }
 
         channelSelector.close();
+
+        for (DatagramChannel channel : peerChannelMap.values()) {
+            channel.close();
+        }
     }
 
     @SneakyThrows
@@ -58,17 +69,19 @@ class BasicRouter implements Router {
 
     @SneakyThrows
     private void receiveFromChannelAndRespond(SelectionKey channelKey) {
+        final String peer = (String) channelKey.attachment();
         final DatagramChannel channel = (DatagramChannel) channelKey.channel();
 
         ioBuffer.clear();
-        final int bytesRead = channel.read(ioBuffer);
+        final int bytesRead;
 
-        if (bytesRead == 0) {
+        try {
+            bytesRead = channel.read(ioBuffer);
+        } catch (PortUnreachableException e) {
             return;
-        } else if (bytesRead == -1) {
-            channel.close();
-            channelKey.cancel();
+        }
 
+        if (bytesRead <= 0) {
             return;
         }
 
@@ -77,8 +90,10 @@ class BasicRouter implements Router {
         ioBuffer.flip();
         ioBuffer.get(messageBytes);
 
+        final String message = new String(messageBytes);
+
         sendMessages(MessageProcessorFactory.createProcessorFor(
-            new String(messageBytes), routingTable, peerRelationshipMap
+            peer, message, routingTable, peerRelationshipMap
         ).get());
     }
 }

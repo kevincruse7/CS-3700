@@ -23,7 +23,10 @@ public class MessageProcessorFactory {
 
     @SneakyThrows
     public static MessageProcessor createProcessorFor(
-        @NonNull String message, @NonNull RoutingTable routingTable, @NonNull Map<String, String> peerRelationshipMap
+        @NonNull String srcPeer,
+        @NonNull String message,
+        @NonNull RoutingTable routingTable,
+        @NonNull Map<String, String> peerRelationshipMap
     ) {
         final String messageType = OBJECT_MAPPER.readTree(message).get("type").textValue();
 
@@ -46,6 +49,8 @@ public class MessageProcessorFactory {
                 return new DataMessageProcessor(
                     OBJECT_MAPPER,
                     routingTable,
+                    peerRelationshipMap,
+                    srcPeer,
                     OBJECT_MAPPER.readValue(message, DataMessage.class)
                 );
             case "dump":

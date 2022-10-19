@@ -20,6 +20,12 @@ class DataMessageProcessor implements MessageProcessor {
     private final RoutingTable routingTable;
 
     @NonNull
+    private final Map<String, String> peerRelationshipMap;
+
+    @NonNull
+    private final String srcPeer;
+
+    @NonNull
     private final DataMessage dataMessage;
 
     @Override
@@ -29,12 +35,15 @@ class DataMessageProcessor implements MessageProcessor {
         final Object message;
         final String nextHop = routingTable.nextHop(dataMessage.getDst());
 
-        if (nextHop.length() == 0) {
-            dst = dataMessage.getSrc();
-            final NoRouteMessage noRouteMessage = new NoRouteMessage();
+        if (nextHop.length() == 0
+            || !peerRelationshipMap.get(srcPeer).equals("cust")
+            && !peerRelationshipMap.get(nextHop).equals("cust")
+        ) {
+            dst = srcPeer;
 
+            final NoRouteMessage noRouteMessage = new NoRouteMessage();
             noRouteMessage.setSrc(MessageProcessorUtil.getSrcAddressFrom(dst));
-            noRouteMessage.setDst(dst);
+            noRouteMessage.setDst(dataMessage.getSrc());
 
             message = noRouteMessage;
         } else {

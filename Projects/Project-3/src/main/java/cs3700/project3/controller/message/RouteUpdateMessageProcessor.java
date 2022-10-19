@@ -37,10 +37,12 @@ class RouteUpdateMessageProcessor implements MessageProcessor {
         routingTable.update(src, routeUpdate);
 
         // Add our AS number to the path, if it's not already there
+        final List<Integer> forwardedAsPath;
         if (!routeUpdate.getAsPath().contains(routingTable.getAs())) {
-            final List<Integer> newAsPath = new ArrayList<>(routeUpdate.getAsPath());
-            newAsPath.add(0, routingTable.getAs());
-            routeUpdate.setAsPath(newAsPath);
+            forwardedAsPath = new ArrayList<>(routeUpdate.getAsPath());
+            forwardedAsPath.add(0, routingTable.getAs());
+        } else {
+            forwardedAsPath = routeUpdate.getAsPath();
         }
 
         return peerRelationshipMap.keySet()
@@ -48,21 +50,23 @@ class RouteUpdateMessageProcessor implements MessageProcessor {
             .filter(peerRelationshipMap.get(src).equals("cust")
                 ? peer -> !peer.equals(src)
                 : peer -> !peer.equals(src) && peerRelationshipMap.get(peer).equals("cust"))
-            .collect(Collectors.toMap(Function.identity(), this::createRouteUpdateMessage));
+            .collect(Collectors.toMap(Function.identity(), peer -> createRouteUpdateMessage(peer, forwardedAsPath)));
     }
 
     @SneakyThrows
-    private String createRouteUpdateMessage(@NonNull String peer) {
-        final RouteUpdateMessage newRouteUpdateMessage = new RouteUpdateMessage();
-        newRouteUpdateMessage.setSrc(MessageProcessorUtil.getSrcAddressFrom(peer));
-        newRouteUpdateMessage.setDst(peer);
-
+    private String createRouteUpdateMessage(@NonNull String peer, @NonNull List<Integer> forwardedAsPath) {
         final RouteUpdate routeUpdate = routeUpdateMessage.getRouteUpdate();
-        routeUpdate.setLocalPref(null);
-        routeUpdate.setSelfOrigin(null);
-        routeUpdate.setOrigin(null);
-        newRouteUpdateMessage.setRouteUpdate(routeUpdate);
 
-        return objectMapper.writeValueAsString(newRouteUpdateMessage);
+        final RouteUpdate forwardedRouteUpdate = new RouteUpdate();
+        forwardedRouteUpdate.setNetwork(routeUpdate.getNetwork());
+        forwardedRouteUpdate.setNetmask(routeUpdate.getNetmask());
+        forwardedRouteUpdate.setAsPath(forwardedAsPath);
+
+        final RouteUpdateMessage forwardedRouteUpdateMessage = new RouteUpdateMessage();
+        forwardedRouteUpdateMessage.setSrc(MessageProcessorUtil.getSrcAddressFrom(peer));
+        forwardedRouteUpdateMessage.setDst(peer);
+        forwardedRouteUpdateMessage.setRouteUpdate(forwardedRouteUpdate);
+
+        return objectMapper.writeValueAsString(forwardedRouteUpdateMessage);
     }
 }

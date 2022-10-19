@@ -45,12 +45,12 @@ class RouteWithdrawalMessageProcessor implements MessageProcessor {
 
     @SneakyThrows
     private String createRouteWithdrawalMessage(@NonNull String peer) {
-        final RouteWithdrawalMessage routeWithdrawalMessage = new RouteWithdrawalMessage();
+        final RouteWithdrawalMessage forwardedRouteWithdrawalMessage = new RouteWithdrawalMessage();
 
-        routeWithdrawalMessage.setSrc(MessageProcessorUtil.getSrcAddressFrom(peer));
-        routeWithdrawalMessage.setDst(peer);
-        routeWithdrawalMessage.setRouteWithdrawals(routeWithdrawalMessage.getRouteWithdrawals());
+        forwardedRouteWithdrawalMessage.setSrc(MessageProcessorUtil.getSrcAddressFrom(peer));
+        forwardedRouteWithdrawalMessage.setDst(peer);
+        forwardedRouteWithdrawalMessage.setRouteWithdrawals(routeWithdrawalMessage.getRouteWithdrawals());
 
-        return objectMapper.writeValueAsString(routeWithdrawalMessage);
+        return objectMapper.writeValueAsString(forwardedRouteWithdrawalMessage);
     }
 }

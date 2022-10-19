@@ -26,17 +26,18 @@ public class RouterFactory {
         final Map<String, String> peerRelationshipMap = new HashMap<>();
 
         for (final String peer : peers) {
-            final String[] peerComponents  = peer.split("-");
+            final String[] peerComponents = peer.split("-");
 
             final int port = Integer.parseInt(peerComponents[0]);
             final String address = peerComponents[1];
             final String relationship = peerComponents[2];
 
-            final DatagramChannel channel = DatagramChannel.open();
+            final DatagramChannel channel = DatagramChannel.open()
+                .bind(new InetSocketAddress(Config.DOMAIN, 0))
+                .connect(new InetSocketAddress(Config.DOMAIN, port));
+
             channel.configureBlocking(false);
-            channel.bind(new InetSocketAddress(Config.DOMAIN, 0));
-            channel.connect(new InetSocketAddress(Config.DOMAIN, port));
-            channel.register(channelSelector, SelectionKey.OP_READ);
+            channel.register(channelSelector, SelectionKey.OP_READ).attach(address);
 
             peerChannelMap.put(address, channel);
             peerRelationshipMap.put(address, relationship);
