@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cs3700.project3.model.message.RouteUpdateMessage;
 import cs3700.project3.model.route.RouteUpdate;
 import cs3700.project3.model.routingtable.RoutingTable;
+import cs3700.project3.util.Util;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -15,6 +16,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of a message processor for route update messages.
+ */
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 class RouteUpdateMessageProcessor implements MessageProcessor {
     @NonNull
@@ -63,7 +67,7 @@ class RouteUpdateMessageProcessor implements MessageProcessor {
         forwardedRouteUpdate.setAsPath(forwardedAsPath);
 
         final RouteUpdateMessage forwardedRouteUpdateMessage = new RouteUpdateMessage();
-        forwardedRouteUpdateMessage.setSrc(MessageProcessorUtil.getSrcAddressFrom(peer));
+        forwardedRouteUpdateMessage.setSrc(Util.getSrcAddressFrom(peer));
         forwardedRouteUpdateMessage.setDst(peer);
         forwardedRouteUpdateMessage.setRouteUpdate(forwardedRouteUpdate);
 

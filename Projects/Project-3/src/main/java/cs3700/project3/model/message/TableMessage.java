@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Data class that represents a table message.
+ */
 @Data
 public class TableMessage {
     @JsonProperty("src")

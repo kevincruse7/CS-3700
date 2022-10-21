@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import cs3700.project3.model.route.RouteUpdate;
 import lombok.Data;
 
+/**
+ * Data class that represents a route update message.
+ */
 @Data
 public class RouteUpdateMessage {
     @JsonProperty("src")

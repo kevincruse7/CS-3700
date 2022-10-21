@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Data class that represents a route withdrawal message.
+ */
 @Data
 public class RouteWithdrawalMessage {
     @JsonProperty("src")

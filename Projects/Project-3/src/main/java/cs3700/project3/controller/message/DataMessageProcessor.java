@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cs3700.project3.model.message.DataMessage;
 import cs3700.project3.model.message.NoRouteMessage;
 import cs3700.project3.model.routingtable.RoutingTable;
+import cs3700.project3.util.Util;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -11,6 +12,9 @@ import lombok.SneakyThrows;
 
 import java.util.Map;
 
+/**
+ * Implementation of a message processor for data messages.
+ */
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 class DataMessageProcessor implements MessageProcessor {
     @NonNull
@@ -35,6 +39,7 @@ class DataMessageProcessor implements MessageProcessor {
         final Object message;
         final String nextHop = routingTable.nextHop(dataMessage.getDst());
 
+        // Determine whether to forward message or to respond with a no route message
         if (nextHop.length() == 0
             || !peerRelationshipMap.get(srcPeer).equals("cust")
             && !peerRelationshipMap.get(nextHop).equals("cust")
@@ -42,7 +47,7 @@ class DataMessageProcessor implements MessageProcessor {
             dst = srcPeer;
 
             final NoRouteMessage noRouteMessage = new NoRouteMessage();
-            noRouteMessage.setSrc(MessageProcessorUtil.getSrcAddressFrom(dst));
+            noRouteMessage.setSrc(Util.getSrcAddressFrom(dst));
             noRouteMessage.setDst(dataMessage.getSrc());
 
             message = noRouteMessage;

@@ -13,14 +13,32 @@ import lombok.SneakyThrows;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Factory class for creating message processors.
+ */
 public class MessageProcessorFactory {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
         .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
+    /**
+     * Creates a message processor for generating handshakes to the given peers.
+     *
+     * @param peers Set of peer addresses to send handshakes to.
+     * @return Created handshake message processor.
+     */
     public static MessageProcessor createHandshakeProcessorFor(@NonNull Set<String> peers) {
         return new HandshakeMessageProcessor(OBJECT_MAPPER, peers);
     }
 
+    /**
+     * Creates a message processor for processing the given received message.
+     *
+     * @param srcPeer Address of peer from which the message was received.
+     * @param message Received message.
+     * @param routingTable Routing table to update, if need be.
+     * @param peerRelationshipMap Map of peer addresses and their relationships to use, if need be.
+     * @return Created message processor.
+     */
     @SneakyThrows
     public static MessageProcessor createProcessorFor(
         @NonNull String srcPeer,
@@ -29,7 +47,6 @@ public class MessageProcessorFactory {
         @NonNull Map<String, String> peerRelationshipMap
     ) {
         final String messageType = OBJECT_MAPPER.readTree(message).get("type").textValue();
-
         switch (messageType) {
             case "update":
                 return new RouteUpdateMessageProcessor(

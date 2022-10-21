@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Data class that represents an entry in a routing table.
+ */
 @Data
 public class RouteEntry {
     @JsonProperty("network")

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cs3700.project3.model.message.RouteWithdrawalMessage;
 import cs3700.project3.model.route.RouteWithdrawal;
 import cs3700.project3.model.routingtable.RoutingTable;
+import cs3700.project3.util.Util;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -13,6 +14,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of a message processor for route withdrawal messages.
+ */
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 class RouteWithdrawalMessageProcessor implements MessageProcessor {
     @NonNull
@@ -46,8 +50,7 @@ class RouteWithdrawalMessageProcessor implements MessageProcessor {
     @SneakyThrows
     private String createRouteWithdrawalMessage(@NonNull String peer) {
         final RouteWithdrawalMessage forwardedRouteWithdrawalMessage = new RouteWithdrawalMessage();
-
-        forwardedRouteWithdrawalMessage.setSrc(MessageProcessorUtil.getSrcAddressFrom(peer));
+        forwardedRouteWithdrawalMessage.setSrc(Util.getSrcAddressFrom(peer));
         forwardedRouteWithdrawalMessage.setDst(peer);
         forwardedRouteWithdrawalMessage.setRouteWithdrawals(routeWithdrawalMessage.getRouteWithdrawals());
 

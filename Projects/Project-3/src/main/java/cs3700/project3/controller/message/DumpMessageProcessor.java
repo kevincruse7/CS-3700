@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cs3700.project3.model.message.DumpMessage;
 import cs3700.project3.model.message.TableMessage;
 import cs3700.project3.model.routingtable.RoutingTable;
+import cs3700.project3.util.Util;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -11,6 +12,9 @@ import lombok.SneakyThrows;
 
 import java.util.Map;
 
+/**
+ * Implementation of a message processor for dump messages.
+ */
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 class DumpMessageProcessor implements MessageProcessor {
     @NonNull
@@ -26,8 +30,7 @@ class DumpMessageProcessor implements MessageProcessor {
     @SneakyThrows
     public Map<String, String> get() {
         final TableMessage tableMessage = new TableMessage();
-
-        tableMessage.setSrc(MessageProcessorUtil.getSrcAddressFrom(dumpMessage.getSrc()));
+        tableMessage.setSrc(Util.getSrcAddressFrom(dumpMessage.getSrc()));
         tableMessage.setDst(dumpMessage.getSrc());
         tableMessage.setRouteEntries(routingTable.dumpContents());
 

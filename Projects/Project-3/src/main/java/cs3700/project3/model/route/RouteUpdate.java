@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Data class that represents the body of a route update message.
+ */
 @Data
 public class RouteUpdate {
     @JsonProperty("network")
