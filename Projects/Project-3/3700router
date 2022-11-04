@@ -1,0 +1,2 @@
+#!/bin/sh
+java -cp target/classes:target/dependency/jackson-annotations-2.14.0-rc1.jar:target/dependency/jackson-core-2.14.0-rc1.jar:target/dependency/jackson-databind-2.14.0-rc1.jar:target/dependency/lombok-1.18.24.jar cs3700.project3.Main $@
