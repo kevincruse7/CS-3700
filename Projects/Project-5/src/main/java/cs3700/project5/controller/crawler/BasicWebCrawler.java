@@ -24,7 +24,7 @@ import java.util.Set;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class BasicWebCrawler implements WebCrawler {
     @NonNull
-    private final HTTPConnection HTTPConnection;
+    private final HTTPConnection httpConnection;
 
     @NonNull
     private final String username;
@@ -49,7 +49,7 @@ class BasicWebCrawler implements WebCrawler {
         pageDeque.clear();
 
         visitedPages.add(Config.WEBSITE_LOGIN_PAGE);
-        String loginPageContent = HTTPConnection.getResource(Config.WEBSITE_LOGIN_PAGE);
+        String loginPageContent = httpConnection.getResource(Config.WEBSITE_LOGIN_PAGE);
 
         Document loginPageDoc = Jsoup.parse(loginPageContent);
 
@@ -67,12 +67,12 @@ class BasicWebCrawler implements WebCrawler {
         );
 
         // Log in to website
-        String rootPage = HTTPConnection.postToResource(
+        String rootPage = httpConnection.postToResource(
             Config.WEBSITE_LOGIN_PAGE.split("\\?")[0],
             loginForm
         );
 
-        String rootPageContent = HTTPConnection.getResource(rootPage);
+        String rootPageContent = httpConnection.getResource(rootPage);
         parsePage(rootPageContent);
 
         // Traverse website by performing a DFS on the hyperlink graph
@@ -84,7 +84,7 @@ class BasicWebCrawler implements WebCrawler {
             }
 
             visitedPages.add(page);
-            String pageContent = HTTPConnection.getResource(page);
+            String pageContent = httpConnection.getResource(page);
 
             if (pageContent.equals("")) {
                 continue;
@@ -101,7 +101,7 @@ class BasicWebCrawler implements WebCrawler {
 
     @Override
     public void close() throws IOException {
-        HTTPConnection.close();
+        httpConnection.close();
     }
 
     private void parsePage(@NonNull String pageContent) {
